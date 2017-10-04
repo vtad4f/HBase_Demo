@@ -45,10 +45,14 @@ public class InsertData extends Configured implements Tool{
 			BufferedReader br = new BufferedReader(new FileReader("Twitter.txt"));
     	    String line;
     	    
+    	    int row_count=0;
+    	    
     	    //iterate over every line of the input file
     	    while((line = br.readLine()) != null) {
     	    	
     	    	if(line.isEmpty())continue;
+    	    	
+    	    	row_count++;
     	    	
     	    	String[] lineArray = line.split("\t");
     	    	String date = lineArray[0];
@@ -58,7 +62,7 @@ public class InsertData extends Configured implements Tool{
     	    	String media_type = lineArray[4];
     	    	String hashtags = lineArray[5];
     	    	String tweet_url = lineArray[6];
-    	    	String retweets = lineArray[7];
+    	    	int retweets = Integer.parseInt(lineArray[7]);
     	    	
     	    	//initialize a put with row key as tweet_url
 	            Put put = new Put(Bytes.toBytes(tweet_url));
@@ -79,6 +83,7 @@ public class InsertData extends Configured implements Tool{
     	    	hTable.put(put);
     	    	hTable.close();    
 	    	}
+    	    System.out.println("Inserted " + row_count + " Inserted");
     	    
 	    } catch (FileNotFoundException e) {
 	    	// TODO Auto-generated catch block

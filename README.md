@@ -22,7 +22,11 @@
 * Default Password:         stu-pass
 * Change Password Command:  sudo passwd cloudera
 
-* "Firefox already running" error solve by command:     killall -SIGTERM firefox
+* "Firefox already running" error solve by command:     
+* killall -SIGTERM firefox
 * "Eclipse workspace in use" error solve by command: 
-cd ~/yourWorkspaceDirectory/.metadata
-rm .lock 
+* cd ~/yourWorkspaceDirectory/.metadata
+* rm .lock
+* If HBase doesn't work and shows the error: "Can't get master address from ZooKeeper; znode data == null"
+* sudo /sbin/service hbase-master restart # On Master host
+* sudo /sbin/service hbase-regionserver restart # On all RS hosts

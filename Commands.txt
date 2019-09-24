@@ -52,6 +52,7 @@ scan 'Twitter', {'COLUMNS'=>'Tweets:Type', 'LIMIT'=>3, 'FILTER'=>"ValueFilter(=,
 
 //see all column value while filtering in one value
 scan 'Twitter', {'COLUMNS'=>'Info:Retweets', 'LIMIT'=>2}
+//decimal 1738 = hexadecimal 6CA
 scan 'Twitter', {'FILTER'=>"SingleColumnValueFilter('Info','Retweets',=,'binary:\x00\x00\x06\xCA')"}
 
 

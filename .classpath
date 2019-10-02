@@ -17,5 +17,8 @@
 	<classpathentry kind="lib" path="/usr/lib/hbase/hbase-client.jar"/>
 	<classpathentry kind="lib" path="/usr/lib/hbase/hbase-common.jar"/>
 	<classpathentry kind="lib" path="/usr/lib/hbase/hbase-protocol.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hbase/lib/htrace-core-3.2.0-incubating.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hbase/lib/htrace-core4-4.0.1-incubating.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hbase/lib/netty-all-4.0.23.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

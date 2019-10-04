@@ -1,7 +1,3 @@
-#!/bin/bash
-
-# enter into hbase environment
-hbase shell
 
 
 ##### Table 'emp' #####

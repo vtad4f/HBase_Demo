@@ -50,7 +50,7 @@ if __name__ == '__main__':
    table = hb.CreateTable('ratings', 'rating')
    assert(table.exists())
    
-   hb.PopulateTable(os.path.join('in', 'TODO'), table)
+   hb.PopulateTable(os.path.join('..', 'movies.txt'), table)
    
    print(table.fetch('1'))
    print(table.fetch('33'))

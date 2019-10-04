@@ -2,50 +2,57 @@
 """
 Created on Wed Oct  2 21:38:19 2019
 
-@author: Ed
+@author: Ed, Vince
 """
 
 from starbase import Connection
 
-c = Connection("127.0.0.1", "8000")
 
-#Create a table instance - no table is created at this point, just instantiated.
-ratings = c.table('ratings')
-
-#if table exists, drop
-if (ratings.exists()):
-    print('Drop existing ratings table \n')
-    ratings.drop()
-    
-#Now create a table(ratings) with column family/ies - rating in this example
-#This is the point when the table is created
-ratings.create('rating')
-#Check if table exists - confirm - this cmd should print True if table exists
-ratings.exists()
-#Show table columns - explore
-ratings.columns()
-'''
-#This is how you add & drop columns if needed
-ratings.add_columns('col1','col2','col3')
-ratings.drop_columns('col1','col2','col3')
-'''
-print('Parsing the ml-100k ratings data.....\n')
-ratingFile = open('PATH to local dir on local PC', 'r')
-
-batch = ratings.batch()
-
-for line in ratingFile:
-    (userID, movieID, rating, timestamp) = line.plit()
-    batch.ipdate(userID, {'rating': {movieID: rating}})
-    
-ratingFile.close()
-
-print('Committing ratings data to HBase via REST serice\n')
-batch.commit(finalize = True)
-
-
-print('Get back ratings for some users.....\n')
-print('Ratings for user ID 1: \n')
-print(ratings.fetch('1'))
-print('Ratings for user ID 33: \n')
-print(ratings.fetch('33'))
+class HBase(Connection):
+   """
+      BRIEF  Just a wrapper for the hbase connection
+   """
+   
+   def __init__(self):
+      """
+         BRIEF  Establish a connection
+      """
+      super().__init__("127.0.0.1", "8000")
+      
+      
+   def CreateTable(self, table_name, *col_names):
+      """
+         BRIEF  Create the table
+      """
+      table = self.table(table_name)
+      if (table.exists()):
+         table.drop()
+      table.create(*col_names)
+      return table
+      
+      
+   def PopulateTable(self, path, table):
+      """
+         BRIEF  Copy all the date from the file to the table
+      """
+      batch = table.batch()
+      with open(path, 'r') as f:
+         for line in f:
+            userID, movieID, rating, _ = line.split() # TODO - Not so hard-coded
+            batch.insert(userID, {'rating': {movieID: rating}})
+      batch.commit(finalize = True)
+      
+      
+if __name__ == '__main__':
+      
+   hb = HBase()
+   
+   table = hb.CreateTable('ratings', 'rating')
+   assert(table.exists())
+   
+   hb.PopulateTable(os.path.join('in', 'TODO'), table)
+   
+   print(table.fetch('1'))
+   print(table.fetch('33'))
+   
+   

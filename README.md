@@ -1,15 +1,9 @@
 # HBase_Demo
 
-### Requirements
-HW2 :HBase
-Due Date is 12th Oct. 
-
-Instruction	Points
+### HW2 : HBase, Due Oct 12
 - Download “movies.txt.gz” From the link https://snap.stanford.edu/data/web-Movies.html.
 - Insert this data to the HBase:
-- Keep two column familys: 
-(i) User (contains columns ‘userid’ and ‘profilename’) 
-(ii) Product (contains remaining columns)
+- Keep two column familys: (i) User (contains columns ‘userid’ and ‘profilename’) (ii) Product (contains remaining columns)
 - Create a unique row keys for each entry (see which column, OR, concatenation of which two columns can be considered as row key) 15%
 - Create versions for some column family.
 - Put multiple data for some specific entry which allows versioning. (Put command)

@@ -60,8 +60,12 @@ def Parse(path, interval, callback, *args, **kwargs):
                
                # Report the error
                raise Exception("{0:<10} #{1}#".format(i, line))
-                  
-                  
+               
+   # Handle whatever is left
+   if reviews:
+      callback(reviews, *args, **kwargs)
+      
+      
 if __name__ == '__main__':
    """
       BRIEF  Test parsing the reviews file

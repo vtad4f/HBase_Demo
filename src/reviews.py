@@ -1,11 +1,8 @@
 
 
-import sys
-
-
 class Reviews:
    """
-      BRIEF  
+      BRIEF  Just a 
    """
    
    FIELDS = [
@@ -21,7 +18,7 @@ class Reviews:
    MOVIE_ID, USER_ID, USER_NAME, HELPFUL, SCORE, TIME, SUMMARY, TEXT = range(len(FIELDS))
    
    @staticmethod
-   def Parse(path):
+   def Parse(path, callback, interval):
       """
          BRIEF  Get the reviews from the file
                 NOTE - the file this is designed to parse has 71205215 lines
@@ -34,10 +31,6 @@ class Reviews:
       with open(path, 'rb') as f:
          for i, line in enumerate(f):
             
-            if i % 1000000 == 0:
-               print(i / 1000000)
-               sys.stdout.flush()
-               
             line = line.strip()
             if line:
                
@@ -51,39 +44,48 @@ class Reviews:
                   if (state == len(Reviews.FIELDS)):
                      reviews.append(review)
                      
-                     # Clear since we're ready to start over
+                     # Start a new review
                      review = {}
                      state = 0
                      
+                     # Trigger the callback every once in a while
+                     if len(reviews) % interval == 0:
+                        callback(reviews)
+                        
+                        # Reset the list after the callback is triggered
+                        reviews = []
+                        
                elif not ':' in line:
                   
                   # Else it may be a continuation of the previous field
                   review[state - 1] += '\n' + line
                   
                else:
+                  
                   # Report the error
-                  print("{0:<10} #{1}#".format(i, line))
-                  sys.stdout.flush()
+                  raise Exception("{0:<10} #{1}#".format(i, line))
                   
-                  # Clear to be safe
-                  review = {}
-                  state = 0
                   
-      return reviews
-      
-      
 if __name__ == '__main__':
    """
       BRIEF  Test parsing the reviews file
    """
    import os
+   import sys
    
    path = os.path.join('..', 'in', 'movies.txt')
    
+   i = 0
+   def HandleReviews(reviews):
+      global i
+      print(i)
+      sys.stdout.flush()
+      i += 1
+      
    print("Parsing...")
    sys.stdout.flush()
    
-   reviews = Reviews.Parse(path)
+   reviews = Reviews.Parse(path, HandleReviews, 100000)
    
    print("Done!")
    sys.stdout.flush()

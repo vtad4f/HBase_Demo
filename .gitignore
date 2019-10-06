@@ -1,4 +1,9 @@
 
+# python
+__pycache__/
+*.pyc
+
+# directories
 in/
 bin/
 jar/

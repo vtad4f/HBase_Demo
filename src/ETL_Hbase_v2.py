@@ -5,9 +5,26 @@ Created on Wed Oct  2 21:38:19 2019
 @author: Ed, Vince
 """
 
+from reviews import Parse, Review
 from starbase import Connection
 
 
+class Table:
+   NAME      = "Review"
+   
+class ColFamily:
+   USER      = "User"
+   PROD      = "Product"
+   
+class Col:
+   USER_NAME = "Name"
+   HELPFUL   = "Helpful"
+   SCORE     = "Score"
+   TIME      = "Time"
+   SUMMARY   = "Summary"
+   TEXT      = "Text"
+   
+   
 class HBase(Connection):
    """
       BRIEF  Just a wrapper for the hbase connection
@@ -17,8 +34,7 @@ class HBase(Connection):
       """
          BRIEF  Establish a connection
       """
-      super().__init__("127.0.0.1", "8000")
-      
+      super(HBase, self).__init__("127.0.0.1", "8000")
       
    def CreateTable(self, table_name, *col_names):
       """
@@ -31,28 +47,42 @@ class HBase(Connection):
       return table
       
       
-   def PopulateTable(self, path, table):
-      """
-         BRIEF  Copy all the date from the file to the table
-      """
-      batch = table.batch()
-      with open(path, 'r') as f:
-         for line in f:
-            userID, movieID, rating, _ = line.split() # TODO - Not so hard-coded
-            batch.insert(userID, {'rating': {movieID: rating}})
-      batch.commit(finalize = True)
-      
-      
+def PopulateTable(reviews, table):
+   """
+      BRIEF  Copy all the date from the file to the table
+   """
+   batch = table.batch()
+   for review in reviews:
+      batch.insert(
+         
+         # unique row key (assuming user can't review same movie twice!)
+         review[Review.USER_ID] + review[Review.MOVIE_ID],
+         
+         # Column families
+         {
+            { "{0}.{1}".format(ColFamily.USER, Col.USER_NAME) : review[Review.USER_NAME]},
+            { "{0}.{1}".format(ColFamily.PROD, Col.HELPFUL  ) : review[Review.HELPFUL  ]},
+            { "{0}.{1}".format(ColFamily.PROD, Col.SCORE    ) : review[Review.SCORE    ]},
+            { "{0}.{1}".format(ColFamily.PROD, Col.TIME     ) : review[Review.TIME     ]},
+            { "{0}.{1}".format(ColFamily.PROD, Col.SUMMARY  ) : review[Review.SUMMARY  ]},
+            { "{0}.{1}".format(ColFamily.PROD, Col.TEXT     ) : review[Review.TEXT     ]}
+         }
+      )
+   batch.commit(finalize = True)
+   
+   
 if __name__ == '__main__':
-      
+   
+   import os
+   
+   # Connect
    hb = HBase()
    
-   table = hb.CreateTable('ratings', 'rating')
-   assert(table.exists())
+   # Force create
+   table = hb.CreateTable(Table.NAME, ColFamily.USER, ColFamily.PROD)
    
-   hb.PopulateTable(os.path.join('..', 'movies.txt'), table)
-   
-   print(table.fetch('1'))
-   print(table.fetch('33'))
+   # Batch insert reviews
+   path = os.path.join('..', 'test', 'movies.txt')
+   Parse(path, 10**5, PopulateTable, table)
    
    

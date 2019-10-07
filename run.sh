@@ -1,22 +1,25 @@
 #!/bin/bash
 
 # install python 2.7
-sudo yum update
-sudo yum install scl-utils
-sudo yum install centos-release-scl-rh
-sudo yum install python27
-sudo scl enable python27 bash
-export PYTHONPATH=/usr/lib/python2.7/site-packages/:$PYTHONPATH
+if [[ "$(python --version 2>&1)" != *'2.7'* ]]; then
+   sudo yum update
+   sudo yum install scl-utils
+   sudo yum install centos-release-scl-rh
+   sudo yum install python27
+   sudo scl enable python27 bash
+fi
 
-# sudo yum makecache
-# sudo yum install yum-utils
-# sudo yum install https://centos7.iuscommunity.org/ius-release.rpm
-# sudo yum makecache
-# sudo yum install python36u
+# use python 2.7
+PY27_DIR=/usr/lib/python2.7/site-packages/
+if [[ -d $PY27_DIR && $PYTHONPATH != *$PY27_DIR* ]]; then
+   export PYTHONPATH=$PY27_DIR:$PYTHONPATH
+fi
 
-# sudo yum install python-pip
-# sudo pip install starbase
+# install hbase for python
+if ! $(python -c "import starbase" 2> /dev/null) ; then
+   python -m pip install starbase
+fi
 
-# run hbase commands
+# example hbase cmds
 # cat src/hbase_cmds.txt | hbase shell -n
 

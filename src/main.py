@@ -99,6 +99,6 @@ if __name__ == '__main__':
    
    # Batch insert reviews
    path = os.path.join('..', 'in', 'movies.txt')
-   Parse(path, 100000, HBase.PopulateTable, table)
+   Parse(path, 1000, HBase.PopulateTable, table)
    
    

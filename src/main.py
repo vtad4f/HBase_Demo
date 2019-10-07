@@ -70,6 +70,10 @@ class HBase(Connection):
       """
          BRIEF  Add all the reviews to the table
       """
+      global i
+      print(i)
+      i += 1
+      
       for review in reviews:
          table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
             FullCol.USER_NAME : review[Review.USER_NAME],
@@ -91,8 +95,10 @@ if __name__ == '__main__':
    # Force create
    table = hb.CreateTable(Table.NAME, Family.USER, Family.PROD)
    
+   i=0
+   
    # Batch insert reviews
-   path = os.path.join('..', 'test', 'movies.txt')
-   Parse(path, 10**5, HBase.PopulateTable, table)
+   path = os.path.join('..', 'in', 'movies.txt')
+   Parse(path, 100000, HBase.PopulateTable, table)
    
    

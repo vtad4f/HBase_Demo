@@ -20,10 +20,6 @@ if ! $(python -c "import starbase" 2> /dev/null) ; then
    python -m pip install starbase
 fi
 
-pushd src > /dev/null
-python main.py
-popd > /dev/null
-
 # example hbase cmds
 # cat src/hbase_cmds.txt | hbase shell -n
 

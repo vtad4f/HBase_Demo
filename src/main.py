@@ -41,7 +41,7 @@ class HBase(Connection):
       """
          BRIEF  Establish a connection
       """
-      super(HBase, self).__init__("127.0.0.1", "8085")
+      super(HBase, self).__init__(port = "8085", retries = 3, retry_delay = 5)
       
    def CreateTable(self, table_name, *col_names):
       """

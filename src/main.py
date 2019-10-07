@@ -7,6 +7,7 @@ Created on Wed Oct  2 21:38:19 2019
 
 from reviews import Parse, Review
 from starbase import Connection
+from requests.exceptions import ConnectionError
 
 
 class Table:
@@ -41,7 +42,7 @@ class HBase(Connection):
       """
          BRIEF  Establish a connection
       """
-      super(HBase, self).__init__(port = "8085", retries = 3, retry_delay = 5)
+      super(HBase, self).__init__(port = "8085")
       
    def CreateTable(self, table_name, *col_names):
       """
@@ -75,16 +76,22 @@ class HBase(Connection):
       i += 1
       
       for review in reviews:
-         table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
-            FullCol.USER_NAME : review[Review.USER_NAME],
-            FullCol.HELPFUL   : review[Review.HELPFUL  ],
-            FullCol.SCORE     : review[Review.SCORE    ],
-            FullCol.TIME      : review[Review.TIME     ],
-            FullCol.SUMMARY   : review[Review.SUMMARY  ],
-            FullCol.TEXT      : review[Review.TEXT     ]
-         })
          
-         
+         again = True
+         while again:
+            try:
+               table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
+                  FullCol.USER_NAME : review[Review.USER_NAME],
+                  FullCol.HELPFUL   : review[Review.HELPFUL  ],
+                  FullCol.SCORE     : review[Review.SCORE    ],
+                  FullCol.TIME      : review[Review.TIME     ],
+                  FullCol.SUMMARY   : review[Review.SUMMARY  ],
+                  FullCol.TEXT      : review[Review.TEXT     ]
+               })
+               again = False
+            except ConnectionError:
+               pass
+               
 if __name__ == '__main__':
    
    import os

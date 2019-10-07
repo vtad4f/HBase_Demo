@@ -12,7 +12,7 @@ from starbase import Connection
 class Table:
    NAME      = "Review"
    
-class ColFamily:
+class Family:
    USER      = "User"
    PROD      = "Product"
    
@@ -24,6 +24,13 @@ class Col:
    SUMMARY   = "Summary"
    TEXT      = "Text"
    
+class FullCol:
+   USER_NAME = "{0}.{1}".format(Family.USER, Col.USER_NAME)
+   HELPFUL   = "{0}.{1}".format(Family.PROD, Col.HELPFUL  )
+   SCORE     = "{0}.{1}".format(Family.PROD, Col.SCORE    )
+   TIME      = "{0}.{1}".format(Family.PROD, Col.TIME     )
+   SUMMARY   = "{0}.{1}".format(Family.PROD, Col.SUMMARY  )
+   TEXT      = "{0}.{1}".format(Family.PROD, Col.TEXT     )
    
 class HBase(Connection):
    """
@@ -65,12 +72,12 @@ class HBase(Connection):
       """
       for review in reviews:
          table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
-            "{0}.{1}".format(ColFamily.USER, Col.USER_NAME) : review[Review.USER_NAME],
-            "{0}.{1}".format(ColFamily.PROD, Col.HELPFUL  ) : review[Review.HELPFUL  ],
-            "{0}.{1}".format(ColFamily.PROD, Col.SCORE    ) : review[Review.SCORE    ],
-            "{0}.{1}".format(ColFamily.PROD, Col.TIME     ) : review[Review.TIME     ],
-            "{0}.{1}".format(ColFamily.PROD, Col.SUMMARY  ) : review[Review.SUMMARY  ],
-            "{0}.{1}".format(ColFamily.PROD, Col.TEXT     ) : review[Review.TEXT     ]
+            FullCol.USER_NAME : review[Review.USER_NAME],
+            FullCol.HELPFUL   : review[Review.HELPFUL  ],
+            FullCol.SCORE     : review[Review.SCORE    ],
+            FullCol.TIME      : review[Review.TIME     ],
+            FullCol.SUMMARY   : review[Review.SUMMARY  ],
+            FullCol.TEXT      : review[Review.TEXT     ]
          })
          
          

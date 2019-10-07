@@ -49,7 +49,7 @@ class HBase(Connection):
    @staticmethod
    def PopulateTable(reviews, table):
       """
-         BRIEF  Copy all the date from the file to the table
+         BRIEF  Do a batch insert if possible
       """
       batch = table.batch()
       if batch:
@@ -61,23 +61,17 @@ class HBase(Connection):
    @staticmethod
    def _InsertReviews(reviews, table):
       """
+         BRIEF  Add all the reviews to the table
       """
       for review in reviews:
-         table.insert(
-            
-            # unique row key (assuming user can't review same movie twice!)
-            review[Review.USER_ID] + review[Review.MOVIE_ID],
-            
-            # columns
-            {
-               { "{0}.{1}".format(ColFamily.USER, Col.USER_NAME) : review[Review.USER_NAME]},
-               { "{0}.{1}".format(ColFamily.PROD, Col.HELPFUL  ) : review[Review.HELPFUL  ]},
-               { "{0}.{1}".format(ColFamily.PROD, Col.SCORE    ) : review[Review.SCORE    ]},
-               { "{0}.{1}".format(ColFamily.PROD, Col.TIME     ) : review[Review.TIME     ]},
-               { "{0}.{1}".format(ColFamily.PROD, Col.SUMMARY  ) : review[Review.SUMMARY  ]},
-               { "{0}.{1}".format(ColFamily.PROD, Col.TEXT     ) : review[Review.TEXT     ]}
-            }
-         )
+         table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID] : {
+            "{0}.{1}".format(ColFamily.USER, Col.USER_NAME) : review[Review.USER_NAME],
+            "{0}.{1}".format(ColFamily.PROD, Col.HELPFUL  ) : review[Review.HELPFUL  ],
+            "{0}.{1}".format(ColFamily.PROD, Col.SCORE    ) : review[Review.SCORE    ],
+            "{0}.{1}".format(ColFamily.PROD, Col.TIME     ) : review[Review.TIME     ],
+            "{0}.{1}".format(ColFamily.PROD, Col.SUMMARY  ) : review[Review.SUMMARY  ],
+            "{0}.{1}".format(ColFamily.PROD, Col.TEXT     ) : review[Review.TEXT     ]
+         })
          
          
 if __name__ == '__main__':

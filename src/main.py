@@ -89,7 +89,7 @@ if __name__ == '__main__':
    hb = HBase()
    
    # Force create
-   table = hb.CreateTable(Table.NAME, ColFamily.USER, ColFamily.PROD)
+   table = hb.CreateTable(Table.NAME, Family.USER, Family.PROD)
    
    # Batch insert reviews
    path = os.path.join('..', 'test', 'movies.txt')

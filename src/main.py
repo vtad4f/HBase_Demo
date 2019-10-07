@@ -64,7 +64,7 @@ class HBase(Connection):
          BRIEF  Add all the reviews to the table
       """
       for review in reviews:
-         table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID] : {
+         table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
             "{0}.{1}".format(ColFamily.USER, Col.USER_NAME) : review[Review.USER_NAME],
             "{0}.{1}".format(ColFamily.PROD, Col.HELPFUL  ) : review[Review.HELPFUL  ],
             "{0}.{1}".format(ColFamily.PROD, Col.SCORE    ) : review[Review.SCORE    ],

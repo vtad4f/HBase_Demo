@@ -1,7 +1,9 @@
 #!/bin/bash
 
+PY27_DIR=/usr/lib/python2.7/site-packages/
+
 # install python 2.7
-if [[ "$(python --version 2>&1)" != *'2.7'* ]]; then
+if [[ ! -d $PY27_DIR ]]; then
    sudo yum update
    sudo yum install scl-utils
    sudo yum install centos-release-scl-rh
@@ -12,7 +14,6 @@ else
 fi
 
 # use python 2.7
-PY27_DIR=/usr/lib/python2.7/site-packages/
 if [[ -d $PY27_DIR && $PYTHONPATH != *$PY27_DIR* ]]; then
    export PYTHONPATH=$PY27_DIR:$PYTHONPATH
 else
@@ -38,4 +39,7 @@ elif [[ ! -d in ]]; then
 else
    echo "Large input file already exists"
 fi
+
+# Why does a read-only state get applied sometimes?
+sudo chmod -R 777 .
 

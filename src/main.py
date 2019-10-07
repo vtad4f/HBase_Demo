@@ -11,7 +11,7 @@ from requests.exceptions import ConnectionError
 
 
 class Table:
-   NAME      = "Review"
+   NAME      = "Test"
    
 class Family:
    USER      = "User"
@@ -105,7 +105,7 @@ if __name__ == '__main__':
    i=0
    
    # Batch insert reviews
-   path = os.path.join('..', 'in', 'movies.txt')
+   path = os.path.join('..', 'test', 'movies.txt')
    Parse(path, 1000, HBase.PopulateTable, table)
    
    

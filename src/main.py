@@ -10,8 +10,13 @@ from starbase import Connection
 from requests.exceptions import ConnectionError
 
 
+class Dir:
+   INPUT     = "in"
+   TEST      = "test"
+   
 class Table:
-   NAME      = "Test"
+   NAME      = "Review"
+   TEST      = "Test"
    
 class Family:
    USER      = "User"
@@ -100,12 +105,12 @@ if __name__ == '__main__':
    hb = HBase()
    
    # Force create
-   table = hb.CreateTable(Table.NAME, Family.USER, Family.PROD)
+   table = hb.CreateTable(Table.TEST, Family.USER, Family.PROD)
    
    i=0
    
    # Batch insert reviews
-   path = os.path.join('..', 'test', 'movies.txt')
+   path = os.path.join('..', Dir.TEST, 'movies.txt')
    Parse(path, 1000, HBase.PopulateTable, table)
    
    

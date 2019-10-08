@@ -99,9 +99,11 @@ class HBase(Connection):
          BRIEF  Add all the reviews to the table
       """
       for review in reviews:
-         if not HBase._InsertReview(review, table):
+         status = HBase._InsertReview(review, table)
+         if status != HBase.SUCCESS:
             
-            print("Failure: {0}={1} {2}={3}".format(
+            print("Failure({0}): {1}={2} {3}={4}".format(
+               status,
                Family.USER, review[Review.USER_ID],
                Family.PROD, review[Review.MOVIE_ID]
             ))
@@ -115,7 +117,7 @@ class HBase(Connection):
       """
          BRIEF  Add a single review to the table
       """
-      return HBase.SUCCESS == table.insert(
+      return table.insert(
          review[Review.USER_ID] + review[Review.MOVIE_ID],
          {
             FullCol.USER_NAME : review[Review.USER_NAME],

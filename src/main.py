@@ -8,6 +8,7 @@ Created on Wed Oct  2 21:38:19 2019
 from reviews import Parse, Review
 from starbase import Connection
 from requests.exceptions import ConnectionError
+import sys
 
 
 class Dir:

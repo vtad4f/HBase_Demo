@@ -1,5 +1,8 @@
 
 
+import sys
+
+
 class Review:
    FIELDS = [
       "product/productId:",
@@ -22,6 +25,7 @@ def Parse(path, interval, callback, *args, **kwargs):
    reviews = []
    review = ['']*len(Review.FIELDS)
    state = 0
+   n = 0
    
    # Iterate over all the lines
    with open(path, 'rb') as f:
@@ -46,7 +50,10 @@ def Parse(path, interval, callback, *args, **kwargs):
                   
                   # Trigger the callback every once in a while
                   if len(reviews) % interval == 0:
+                     print(n)
+                     sys.stdout.flush()
                      callback(reviews, *args, **kwargs)
+                     n += 1
                      
                      # Reset the list after the callback is triggered
                      reviews = []
@@ -63,6 +70,8 @@ def Parse(path, interval, callback, *args, **kwargs):
                
    # Handle whatever is left
    if reviews:
+      print(n)
+      sys.stdout.flush()
       callback(reviews, *args, **kwargs)
       
       
@@ -71,21 +80,14 @@ if __name__ == '__main__':
       BRIEF  Test parsing the reviews file
    """
    import os
-   import sys
    
-   path = os.path.join('..', 'in', 'movies.txt')
-   
-   i = 0
    def DoNothing(reviews):
-      global i
-      print(i)
-      sys.stdout.flush()
-      i += 1
+      pass
       
    print("Parsing...")
    sys.stdout.flush()
    
-   reviews = Parse(path, 100000, DoNothing)
+   Parse(os.path.join('..', 'in', 'movies.txt'), 100000, DoNothing)
    
    print("Done!")
    sys.stdout.flush()

@@ -49,7 +49,7 @@ class HBase(Connection):
       """
       super(HBase, self).__init__(port = "8085")
       
-   def CreateTable(self, table_name, *col_names):
+   def ForceCreateTable(self, table_name, *col_names):
       """
          BRIEF  Create the table
       """
@@ -76,10 +76,6 @@ class HBase(Connection):
       """
          BRIEF  Add all the reviews to the table
       """
-      global i
-      print(i)
-      i += 1
-      
       for review in reviews:
          
          again = True
@@ -97,6 +93,7 @@ class HBase(Connection):
             except ConnectionError:
                pass
                
+               
 if __name__ == '__main__':
    
    import os
@@ -104,13 +101,12 @@ if __name__ == '__main__':
    # Connect
    hb = HBase()
    
-   # Force create
-   table = hb.CreateTable(Table.TEST, Family.USER, Family.PROD)
+   # Force create table
+   table = hb.ForceCreateTable(Table.TEST, Family.USER, Family.PROD)
    
-   i=0
+   # Insert reviews into table
+   Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)
    
-   # Batch insert reviews
-   path = os.path.join('..', Dir.TEST, 'movies.txt')
-   Parse(path, 1000, HBase.PopulateTable, table)
+   
    
    

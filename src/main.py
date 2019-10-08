@@ -30,6 +30,7 @@ class Col:
    TIME      = "Time"
    SUMMARY   = "Summary"
    TEXT      = "Text"
+   ALL       = [USER_NAME, HELPFUL, SCORE, TIME, SUMMARY, TEXT]
    
 class FullCol:
    USER_NAME = "{0}.{1}".format(Family.USER, Col.USER_NAME)
@@ -38,6 +39,7 @@ class FullCol:
    TIME      = "{0}.{1}".format(Family.PROD, Col.TIME     )
    SUMMARY   = "{0}.{1}".format(Family.PROD, Col.SUMMARY  )
    TEXT      = "{0}.{1}".format(Family.PROD, Col.TEXT     )
+   ALL       = [USER_NAME, HELPFUL, SCORE, TIME, SUMMARY, TEXT]
    
    
 def KeepTrying(func):
@@ -126,7 +128,7 @@ if __name__ == '__main__':
    hb = HBase()
    
    # Force create table
-   table = hb.ForceCreateTable(Table.TEST, FullCol.USER_NAME, FullCol.HELPFUL, FullCol.SCORE, FullCol.TIME, FullCol.SUMMARY, FullCol.TEXT)
+   table = hb.ForceCreateTable(Table.TEST, *Col.ALL)
    
    # Insert reviews into table
    Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)

@@ -126,7 +126,7 @@ if __name__ == '__main__':
    hb = HBase()
    
    # Force create table
-   table = hb.ForceCreateTable(Table.TEST, Family.USER, Family.PROD)
+   table = hb.ForceCreateTable(Table.TEST, FullCol.USER_NAME, FullCol.HELPFUL, FullCol.SCORE, FullCol.TIME, FullCol.SUMMARY, FullCol.TEXT)
    
    # Insert reviews into table
    Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)

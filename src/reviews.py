@@ -20,7 +20,8 @@ class Review:
 def Parse(path, interval, callback, *args, **kwargs):
    """
       BRIEF  Get the reviews from the file
-             NOTE - the file this is designed to parse has 71205215 lines
+             NOTE - The file this is designed to parse has 71205215 lines
+                  - The max printed value of n is 7911 for interval 1000
    """
    reviews = []
    review = ['']*len(Review.FIELDS)

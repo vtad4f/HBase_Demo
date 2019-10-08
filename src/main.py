@@ -57,6 +57,11 @@ class HBase(Connection):
       BRIEF  Just a wrapper for the hbase connection
    """
    
+   SUCCESS = 200 # HTTP Status Code
+   
+   version = 1
+   
+   
    def __init__(self):
       """
          BRIEF  Establish a connection
@@ -93,7 +98,15 @@ class HBase(Connection):
          BRIEF  Add all the reviews to the table
       """
       for review in reviews:
-         HBase._InsertReview(review, table)
+         if not HBase._InsertReview(review, table):
+            
+            print("Failure: {0}={1} {2}={3}".format(
+               review[Family.USER], review[Review.USER_ID],
+               review[Family.PROD], review[Review.MOVIE_ID]
+            ))
+            sys.stdout.flush()
+            
+         HBase.version += 1 # Same user can review a movie twice!
          
    @staticmethod
    @KeepTrying
@@ -101,14 +114,18 @@ class HBase(Connection):
       """
          BRIEF  Add a single review to the table
       """
-      table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
-         FullCol.USER_NAME : review[Review.USER_NAME],
-         FullCol.HELPFUL   : review[Review.HELPFUL  ],
-         FullCol.SCORE     : review[Review.SCORE    ],
-         FullCol.TIME      : review[Review.TIME     ],
-         FullCol.SUMMARY   : review[Review.SUMMARY  ],
-         FullCol.TEXT      : review[Review.TEXT     ]
-      })
+      return HBase.SUCCESS == table.insert(
+         review[Review.USER_ID] + review[Review.MOVIE_ID],
+         {
+            FullCol.USER_NAME : review[Review.USER_NAME],
+            FullCol.HELPFUL   : review[Review.HELPFUL  ],
+            FullCol.SCORE     : review[Review.SCORE    ],
+            FullCol.TIME      : review[Review.TIME     ],
+            FullCol.SUMMARY   : review[Review.SUMMARY  ],
+            FullCol.TEXT      : review[Review.TEXT     ]
+         },
+         HBase.version # Use same version per row for both column families
+      )
       
       
 if __name__ == '__main__':
@@ -124,6 +141,15 @@ if __name__ == '__main__':
    # Insert reviews into table
    Parse(os.path.join('..', Dir.INPUT, 'movies.txt'), 1000, HBase.PopulateTable, table)
    
+   # TODO - insert duplicate (with a different version)
+   # TODO - query to be sure both are present in the table
    
+   # TODO - aggregate query for 'helpfulness'
+   # TODO - aggregate query for 'score'
+   
+   # TODO - query that involves sorting
+   # TODO - two queries that show analytics from 'review text' and 'review summary'
+   
+   # TODO - submit with screenshot
    
    

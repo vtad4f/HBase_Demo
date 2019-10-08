@@ -101,8 +101,8 @@ class HBase(Connection):
          if not HBase._InsertReview(review, table):
             
             print("Failure: {0}={1} {2}={3}".format(
-               review[Family.USER], review[Review.USER_ID],
-               review[Family.PROD], review[Review.MOVIE_ID]
+               Family.USER, review[Review.USER_ID],
+               Family.PROD, review[Review.MOVIE_ID]
             ))
             sys.stdout.flush()
             

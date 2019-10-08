@@ -65,7 +65,6 @@ class HBase(Connection):
       """
       super(HBase, self).__init__(port = "8085")
       
-   @KeepTrying
    def ForceCreateTable(self, table_name, *col_names):
       """
          BRIEF  Create the table
@@ -74,6 +73,7 @@ class HBase(Connection):
       if (table.exists()):
          table.drop()
       table.create(*col_names)
+      assert(table.exists)
       return table
       
    @staticmethod

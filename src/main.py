@@ -38,6 +38,20 @@ class FullCol:
    SUMMARY   = "{0}.{1}".format(Family.PROD, Col.SUMMARY  )
    TEXT      = "{0}.{1}".format(Family.PROD, Col.TEXT     )
    
+   
+def KeepTrying(func):
+   """
+      BRIEF  This decorator calls the fcn until there is no ConnectionError
+   """
+   def Wrapper(*args, **kwargs):
+      while True:
+         try:
+            return func(*args, **kwargs)
+         except ConnectionError:
+            pass
+   return Wrapper
+   
+   
 class HBase(Connection):
    """
       BRIEF  Just a wrapper for the hbase connection
@@ -49,6 +63,7 @@ class HBase(Connection):
       """
       super(HBase, self).__init__(port = "8085")
       
+   @KeepTrying
    def ForceCreateTable(self, table_name, *col_names):
       """
          BRIEF  Create the table
@@ -60,6 +75,7 @@ class HBase(Connection):
       return table
       
    @staticmethod
+   @KeepTrying
    def PopulateTable(reviews, table):
       """
          BRIEF  Do a batch insert if possible
@@ -77,23 +93,24 @@ class HBase(Connection):
          BRIEF  Add all the reviews to the table
       """
       for review in reviews:
+         HBase._InsertReview(review, table)
          
-         again = True
-         while again:
-            try:
-               table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
-                  FullCol.USER_NAME : review[Review.USER_NAME],
-                  FullCol.HELPFUL   : review[Review.HELPFUL  ],
-                  FullCol.SCORE     : review[Review.SCORE    ],
-                  FullCol.TIME      : review[Review.TIME     ],
-                  FullCol.SUMMARY   : review[Review.SUMMARY  ],
-                  FullCol.TEXT      : review[Review.TEXT     ]
-               })
-               again = False
-            except ConnectionError:
-               pass
-               
-               
+   @staticmethod
+   @KeepTrying
+   def _InsertReview(review, table):
+      """
+         BRIEF  Add a single review to the table
+      """
+      table.insert(review[Review.USER_ID] + review[Review.MOVIE_ID], {
+         FullCol.USER_NAME : review[Review.USER_NAME],
+         FullCol.HELPFUL   : review[Review.HELPFUL  ],
+         FullCol.SCORE     : review[Review.SCORE    ],
+         FullCol.TIME      : review[Review.TIME     ],
+         FullCol.SUMMARY   : review[Review.SUMMARY  ],
+         FullCol.TEXT      : review[Review.TEXT     ]
+      })
+      
+      
 if __name__ == '__main__':
    
    import os
@@ -102,10 +119,10 @@ if __name__ == '__main__':
    hb = HBase()
    
    # Force create table
-   table = hb.ForceCreateTable(Table.TEST, Family.USER, Family.PROD)
+   table = hb.ForceCreateTable(Table.NAME, Family.USER, Family.PROD)
    
    # Insert reviews into table
-   Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)
+   Parse(os.path.join('..', Dir.INPUT, 'movies.txt'), 1000, HBase.PopulateTable, table)
    
    
    

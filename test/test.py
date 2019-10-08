@@ -1,6 +1,6 @@
 from starbase import Connection
 
-c = Connection()
+c = Connection(port = "8085")
 t = c.table('table3')
 
 print('t.create', t.create('column1', 'column2', 'column3'))

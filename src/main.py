@@ -126,10 +126,10 @@ if __name__ == '__main__':
    hb = HBase()
    
    # Force create table
-   table = hb.ForceCreateTable(Table.NAME, Family.USER, Family.PROD)
+   table = hb.ForceCreateTable(Table.TEST, Family.USER, Family.PROD)
    
    # Insert reviews into table
-   Parse(os.path.join('..', Dir.INPUT, 'movies.txt'), 1000, HBase.PopulateTable, table)
+   Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)
    
    # TODO - insert duplicate (with a different version)
    # TODO - query to be sure both are present in the table

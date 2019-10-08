@@ -131,6 +131,11 @@ if __name__ == '__main__':
    # Insert reviews into table
    Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)
    
+   # print content
+   for row in table.fetch_all_rows():
+      print(row)
+      break
+      
    # TODO - insert duplicate (with a different version)
    # TODO - query to be sure both are present in the table
    

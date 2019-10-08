@@ -28,6 +28,9 @@ def Parse(path, interval, callback, *args, **kwargs):
    state = 0
    n = 0
    
+   print("Parsing...")
+   sys.stdout.flush()
+   
    # Iterate over all the lines
    with open(path, 'rb') as f:
       for i, line in enumerate(f):
@@ -75,7 +78,10 @@ def Parse(path, interval, callback, *args, **kwargs):
       sys.stdout.flush()
       callback(reviews, *args, **kwargs)
       
-      
+   print("Done!")
+   sys.stdout.flush()
+   
+   
 if __name__ == '__main__':
    """
       BRIEF  Test parsing the reviews file
@@ -85,12 +91,6 @@ if __name__ == '__main__':
    def DoNothing(reviews):
       pass
       
-   print("Parsing...")
-   sys.stdout.flush()
-   
    Parse(os.path.join('..', 'in', 'movies.txt'), 100000, DoNothing)
-   
-   print("Done!")
-   sys.stdout.flush()
    
    

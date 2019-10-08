@@ -57,13 +57,13 @@ class HBase(Connection):
    """
       BRIEF  Just a wrapper for the hbase connection
    """
+   version = 1
    
    def __init__(self):
       """
          BRIEF  Establish a connection
       """
       super(HBase, self).__init__(port = "8085")
-      self.version = 1
       
    @KeepTrying
    def ForceCreateTable(self, table_name, *col_names):
@@ -96,7 +96,7 @@ class HBase(Connection):
       """
       for review in reviews:
          HBase._InsertReview(review, table)
-         self.version += 1 # Same user can review a movie twice!
+         HBase.version += 1 # Same user can review a movie twice!
          
    @staticmethod
    @KeepTrying
@@ -114,7 +114,7 @@ class HBase(Connection):
             FullCol.SUMMARY   : review[Review.SUMMARY  ],
             FullCol.TEXT      : review[Review.TEXT     ]
          },
-         self.version # Use same version per row for both column families
+         HBase.version # Use same version per row for both column families
       )
       
       

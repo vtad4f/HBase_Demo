@@ -22,7 +22,7 @@ class Table:
 class ColFamily:
    USER      = "User"
    PROD      = "Product"
-   ALL       - [USER, PROD]
+   ALL       = [USER, PROD]
    
 class Col:
    USER_NAME = "Name"

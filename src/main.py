@@ -58,16 +58,12 @@ class HBase(Connection):
       BRIEF  Just a wrapper for the hbase connection
    """
    
-   SUCCESS = 200 # HTTP Status Code
-   
-   version = 1
-   
-   
    def __init__(self):
       """
          BRIEF  Establish a connection
       """
       super(HBase, self).__init__(port = "8085")
+      self.version = 1
       
    @KeepTrying
    def ForceCreateTable(self, table_name, *col_names):
@@ -99,17 +95,8 @@ class HBase(Connection):
          BRIEF  Add all the reviews to the table
       """
       for review in reviews:
-         status = HBase._InsertReview(review, table)
-         if status != HBase.SUCCESS:
-            
-            print("Failure({0}): {1}={2} {3}={4}".format(
-               status,
-               Family.USER, review[Review.USER_ID],
-               Family.PROD, review[Review.MOVIE_ID]
-            ))
-            sys.stdout.flush()
-            
-         HBase.version += 1 # Same user can review a movie twice!
+         HBase._InsertReview(review, table)
+         self.version += 1 # Same user can review a movie twice!
          
    @staticmethod
    @KeepTrying
@@ -117,7 +104,7 @@ class HBase(Connection):
       """
          BRIEF  Add a single review to the table
       """
-      return table.insert(
+      table.insert(
          review[Review.USER_ID] + review[Review.MOVIE_ID],
          {
             FullCol.USER_NAME : review[Review.USER_NAME],
@@ -127,7 +114,7 @@ class HBase(Connection):
             FullCol.SUMMARY   : review[Review.SUMMARY  ],
             FullCol.TEXT      : review[Review.TEXT     ]
          },
-         HBase.version # Use same version per row for both column families
+         self.version # Use same version per row for both column families
       )
       
       

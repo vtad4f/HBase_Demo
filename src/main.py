@@ -19,9 +19,10 @@ class Table:
    NAME      = "Review"
    TEST      = "Test"
    
-class Family:
+class ColFamily:
    USER      = "User"
    PROD      = "Product"
+   ALL       - [USER, PROD]
    
 class Col:
    USER_NAME = "Name"
@@ -33,12 +34,12 @@ class Col:
    ALL       = [USER_NAME, HELPFUL, SCORE, TIME, SUMMARY, TEXT]
    
 class FullCol:
-   USER_NAME = "{0}.{1}".format(Family.USER, Col.USER_NAME)
-   HELPFUL   = "{0}.{1}".format(Family.PROD, Col.HELPFUL  )
-   SCORE     = "{0}.{1}".format(Family.PROD, Col.SCORE    )
-   TIME      = "{0}.{1}".format(Family.PROD, Col.TIME     )
-   SUMMARY   = "{0}.{1}".format(Family.PROD, Col.SUMMARY  )
-   TEXT      = "{0}.{1}".format(Family.PROD, Col.TEXT     )
+   USER_NAME = "{0}.{1}".format(ColFamily.USER, Col.USER_NAME)
+   HELPFUL   = "{0}.{1}".format(ColFamily.PROD, Col.HELPFUL  )
+   SCORE     = "{0}.{1}".format(ColFamily.PROD, Col.SCORE    )
+   TIME      = "{0}.{1}".format(ColFamily.PROD, Col.TIME     )
+   SUMMARY   = "{0}.{1}".format(ColFamily.PROD, Col.SUMMARY  )
+   TEXT      = "{0}.{1}".format(ColFamily.PROD, Col.TEXT     )
    ALL       = [USER_NAME, HELPFUL, SCORE, TIME, SUMMARY, TEXT]
    
    
@@ -128,7 +129,7 @@ if __name__ == '__main__':
    hb = HBase()
    
    # Force create table
-   table = hb.ForceCreateTable(Table.TEST, *Col.ALL)
+   table = hb.ForceCreateTable(Table.TEST, *ColFamily.ALL)
    
    # Insert reviews into table
    Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)

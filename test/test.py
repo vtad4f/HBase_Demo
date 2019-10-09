@@ -2,7 +2,11 @@ from starbase import Connection
 from requests.exceptions import ConnectionError
 import sys
 
-HBASE_PORTS = set(map(str, [ # cloudera 5.14.x & 5.14.x
+HBASE_PORTS = set(map(str, [ # cloudera 5.14.x & 5.2.x & 6.3.x
+   16000, # Master
+   16010, # Master
+   16020, # RegionServer
+   16030, # RegionServer
    60000, # Master
    60010, # Master
    60020, # RegionServer

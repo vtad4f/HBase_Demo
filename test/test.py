@@ -1,5 +1,34 @@
 from starbase import Connection
+from requests.exceptions import ConnectionError
+import sys
 
+HBASE_PORTS = set(map(str, [ # cloudera 5.14.x & 5.14.x
+   60000, # Master
+   60010, # Master
+   60020, # RegionServer
+   60030, # RegionServer
+   2181 , # HQuorumPeer
+   2888 , # HQuorumPeer
+   3888 , # HQuorumPeer
+   8080 , # REST
+   20550, # REST
+   8085 , # REST UI
+   9090 , # Thrift Server
+   9095 , # Thrift Server
+   11060, # hbase-solr-indexer
+]))
+
+for port in HBASE_PORTS:
+   try:
+      c = Connection(port = port)
+      t = c.table('tbl')
+      t.create('col')
+      t.drop()
+      print("Connection success! port {0}".format(port))
+   except ConnectionError:
+      print("Connection failed!  port {0}".format(port))
+   sys.stdout.flush()
+   
 c = Connection(port = "8085")
 t = c.table('table3')
 

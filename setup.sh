@@ -12,12 +12,16 @@ else
    echo "python 2.7 is already installed"
 fi
 
-# install hbase for python
-if ! $(python -c "import starbase" 2> /dev/null) ; then
-   python -m pip install starbase
-else
-   echo "starbase is already pip-installed"
-fi
+function _PipInstall
+{
+   if ! $(python -c "import $1" 2> /dev/null) ; then
+      python -m pip install $1
+   else
+      echo "$1 is already pip-installed"
+   fi
+}
+_PipInstall starbase
+_PipInstall mock
 
 # download large input file
 if [[ -d in && ! -f in/movies.txt ]]; then

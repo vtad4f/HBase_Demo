@@ -2,9 +2,13 @@
    @author: Vince
 """
 
+import re
 import sys
 
 
+class Regex:
+   NON_ASCII = re.compile(r'[^\x00-\x7f]') # For replacing non-ascii chars
+   
 class Review:
    FIELDS = [
       "product/productId:",
@@ -23,13 +27,13 @@ def Parse(path, interval, callback, *args, **kwargs):
    """
       BRIEF  Get the reviews from the file
              NOTE - The file this is designed to parse has 71205215 lines
-                  - The max printed value of n is 7911 for interval 1000
+                  - The max printed value of n is 7912 for interval 1000
    """
    reviews = []
    review = ['']*len(Review.FIELDS)
    first_review = None
    state = 0
-   n = 0
+   n = 1
    
    print("Parsing...")
    sys.stdout.flush()
@@ -38,7 +42,7 @@ def Parse(path, interval, callback, *args, **kwargs):
    with open(path, 'rb') as f:
       for i, line in enumerate(f):
          
-         line = line.strip()
+         line = Regex.NON_ASCII.sub('', line).strip()
          if line:
             
             # Expect certain content each line

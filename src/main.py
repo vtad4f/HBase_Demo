@@ -5,6 +5,7 @@ Created on Wed Oct  2 21:38:19 2019
 @author: Ed, Vince
 """
 
+from mock_hbase import MockTable
 from hbase import HBase, ColFamily, FullCol
 from reviews import Parse, Review
 from mock import patch
@@ -12,7 +13,7 @@ import os
 import sys
 
 
-@patch('hbase.HBase.ForceCreateTable')
+@patch('hbase.HBase.ForceCreateTable', side_effect=[MockTable()])
 @patch('starbase.Connection')
 def MockTest(*args):
    """

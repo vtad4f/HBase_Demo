@@ -1,4 +1,6 @@
-
+"""
+   @author: Vince
+"""
 
 import sys
 
@@ -25,6 +27,7 @@ def Parse(path, interval, callback, *args, **kwargs):
    """
    reviews = []
    review = ['']*len(Review.FIELDS)
+   first_review = None
    state = 0
    n = 0
    
@@ -48,6 +51,9 @@ def Parse(path, interval, callback, *args, **kwargs):
                if (state == len(Review.FIELDS)):
                   reviews.append(review)
                   
+                  if first_review is None:
+                     first_review = review
+                     
                   # Start a new review
                   review = ['']*len(Review.FIELDS)
                   state = 0
@@ -80,6 +86,8 @@ def Parse(path, interval, callback, *args, **kwargs):
       
    print("Done!")
    sys.stdout.flush()
+   
+   return first_review
    
    
 if __name__ == '__main__':

@@ -1,4 +1,6 @@
-
+"""
+   @author: Vince
+"""
 
 from reviews import Review
 from starbase import Connection
@@ -67,6 +69,7 @@ class HBase():
       """
          BRIEF  Do a batch insert if possible
       """
+      assert(len(reviews))
       batch = table.batch()
       if batch:
          HBase._InsertReviews(reviews, batch)
@@ -79,9 +82,12 @@ class HBase():
       """
          BRIEF  Add all the reviews to the table
       """
+      HBase._InsertReview(reviews[0], table) # Deliberately inserted twice!
+      HBase.version += 1
+      
       for review in reviews:
          HBase._InsertReview(review, table)
-         HBase.version += 1 # Same user can review a movie twice!
+         HBase.version += 1
          
    @staticmethod
    @KeepTrying

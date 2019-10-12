@@ -5,137 +5,22 @@ Created on Wed Oct  2 21:38:19 2019
 @author: Ed, Vince
 """
 
-from reviews import Parse, Review
-from starbase import Connection
-from requests.exceptions import ConnectionError
+from reviews import Parse
+from hbase import HBase, ColFamily
+from mock import patch, MagicMock
+import os
 import sys
 
 
-class Dir:
-   INPUT     = "in"
-   TEST      = "test"
-   
-class Table:
-   NAME      = "Review"
-   TEST      = "Test"
-   
-class ColFamily:
-   USER      = "User"
-   PROD      = "Product"
-   ALL       = [USER, PROD]
-   
-class Col:
-   USER_NAME = "Name"
-   HELPFUL   = "Helpful"
-   SCORE     = "Score"
-   TIME      = "Time"
-   SUMMARY   = "Summary"
-   TEXT      = "Text"
-   ALL       = [USER_NAME, HELPFUL, SCORE, TIME, SUMMARY, TEXT]
-   
-class FullCol:
-   USER_NAME = "{0}.{1}".format(ColFamily.USER, Col.USER_NAME)
-   HELPFUL   = "{0}.{1}".format(ColFamily.PROD, Col.HELPFUL  )
-   SCORE     = "{0}.{1}".format(ColFamily.PROD, Col.SCORE    )
-   TIME      = "{0}.{1}".format(ColFamily.PROD, Col.TIME     )
-   SUMMARY   = "{0}.{1}".format(ColFamily.PROD, Col.SUMMARY  )
-   TEXT      = "{0}.{1}".format(ColFamily.PROD, Col.TEXT     )
-   ALL       = [USER_NAME, HELPFUL, SCORE, TIME, SUMMARY, TEXT]
-   
-   
-def KeepTrying(func):
+def Main(table_name, input_dir):
    """
-      BRIEF  This decorator calls the fcn until there is no ConnectionError
+      BRIEF  Main is a separate function so that we can use mock.patch
    """
-   def Wrapper(*args, **kwargs):
-      while True:
-         try:
-            return func(*args, **kwargs)
-         except ConnectionError:
-            pass
-   return Wrapper
-   
-   
-class HBase(Connection):
-   """
-      BRIEF  Just a wrapper for the hbase connection
-   """
-   version = 1
-   
-   def __init__(self):
-      """
-         BRIEF  Establish a connection
-      """
-      super(HBase, self).__init__(port = "8085")
-      
-   def ForceCreateTable(self, table_name, *col_names):
-      """
-         BRIEF  Create the table
-      """
-      table = self.table(table_name)
-      if (table.exists()):
-         table.drop()
-      table.create(*col_names)
-      assert(table.exists)
-      return table
-      
-   @staticmethod
-   @KeepTrying
-   def PopulateTable(reviews, table):
-      """
-         BRIEF  Do a batch insert if possible
-      """
-      batch = table.batch()
-      if batch:
-         HBase._InsertReviews(reviews, batch)
-         batch.commit(finalize = True)
-      else:
-         HBase._InsertReviews(reviews, table)
-         
-   @staticmethod
-   def _InsertReviews(reviews, table):
-      """
-         BRIEF  Add all the reviews to the table
-      """
-      for review in reviews:
-         HBase._InsertReview(review, table)
-         HBase.version += 1 # Same user can review a movie twice!
-         
-   @staticmethod
-   @KeepTrying
-   def _InsertReview(review, table):
-      """
-         BRIEF  Add a single review to the table
-      """
-      table.insert(
-         review[Review.USER_ID] + review[Review.MOVIE_ID],
-         {
-            FullCol.USER_NAME : review[Review.USER_NAME],
-            FullCol.HELPFUL   : review[Review.HELPFUL  ],
-            FullCol.SCORE     : review[Review.SCORE    ],
-            FullCol.TIME      : review[Review.TIME     ],
-            FullCol.SUMMARY   : review[Review.SUMMARY  ],
-            FullCol.TEXT      : review[Review.TEXT     ]
-         },
-         HBase.version # Use same version per row for both column families
-      )
-      
-      
-if __name__ == '__main__':
-   
-   import os
-   
-   # Connect
-   hb = HBase()
-   
-   # Force create table
-   table = hb.ForceCreateTable(Table.TEST, *ColFamily.ALL)
-   
-   # Insert reviews into table
-   Parse(os.path.join('..', Dir.TEST, 'movies.txt'), 1000, HBase.PopulateTable, table)
+   table = HBase.ForceCreateTable(table_name, *ColFamily.ALL, port = "8085")
+   Parse(os.path.join('..', input_dir, 'movies.txt'), 1000, HBase.PopulateTable, table)
    
    # Check results
-   row = table.fetch('A141HP4LYPWMSRB003AI2VGA')
+   row = table.fetch('A141HP4LYPWMSRB003AI2VGA') # first entry
    print(row)
    sys.stdout.flush()
    
@@ -154,5 +39,31 @@ if __name__ == '__main__':
    # TODO - two queries that show analytics from 'review text' and 'review summary'
    
    # TODO - submit with screenshot
+   
+   
+def Test():
+   """
+      BRIEF  Test using a smaller movies.txt (just the first 500 lines)
+   """
+   Main('test', 'test')
+   
+   
+@patch('hbase.HBase.ForceCreateTable')
+@patch('starbase.Connection')
+def MockTest(*args):
+   """
+      BRIEF  Test using a fake starbase
+   """
+   Test()
+   
+   
+if __name__ == '__main__':
+   """
+      BRIEF  Main execution
+   """
+   MockTest()
+   # Test() # Uncomment once the VM is fixed
+   # Main('reviews', 'in') # uncomment once Test works
+
    
    

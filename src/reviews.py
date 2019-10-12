@@ -7,7 +7,7 @@ import sys
 
 
 class Regex:
-   NON_ASCII = re.compile(r'[^\x00-\x7f]') # For replacing non-ascii chars
+   NON_ASCII = re.compile(r'[^\x00-\x7f]') # https://stackoverflow.com/questions/40872126/python-replace-non-ascii-character-in-string/40872225
    
 class Review:
    FIELDS = [

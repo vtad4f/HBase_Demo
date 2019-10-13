@@ -34,6 +34,14 @@ class MockTable(OrderedDict):
       """
          BRIEF  Get matching rows
       """
-      return '\n'.join(map(str, self[row_id].items()))
+      return self[row_id].iteritems() # Get version and row contents
       
-      
+   def fetch_all_rows(self):
+      """
+         BRIEF  Get all the rows (assume we aren't displaying 
+      """
+      for row_id, versions in self.iteritems():
+         for version, row in versions.iteritems():
+            yield row # Get row contents, but don't bother with row id or version
+            
+            

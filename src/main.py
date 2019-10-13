@@ -10,7 +10,12 @@ from hbase import HBase, ColFamily, FullCol
 from reviews import Parse, Review
 from mock import patch
 import os
+import re
 import sys
+
+
+class Regex:
+   WORD = re.compile(r'[A-Za-z0-9_-]+', re.MULTILINE)
 
 
 @patch('hbase.HBase.ForceCreateTable', side_effect=[MockTable()])
@@ -60,47 +65,45 @@ def DuplicateQuery(table, review):
       BRIEF  Confirm that the review was added twice, each time with a new id
    """
    row_key = review[Review.USER_ID] + review[Review.MOVIE_ID]
-   print(table.fetch(row_key))
+   for row in table.fetch(row_key):
+      print(row)
    sys.stdout.flush()
    
-   return row_key
    
-   
-def AggregateQuery(table, full_col_name, review):
+def AggregateQuery(table, full_col_name):
    """
       BRIEF Use DuplicateQuery func to extract row_key, fetch values & then perform aggregation
       NOTE: row-wise
    """
-   row_key = DuplicateQuery(table, review)
-   values = table.fetch(row_key)
-   aggr = sum((table[full_col_name]) for row_key in values)
+   total = 0
+   count = 0.0
+   for row in table.fetch_all_rows():
+      total += int(float(row[full_col_name].split('/')[0]))
+      count += 1.0
+   print("(Aggregate) Average({0}) = {1}".format(full_col_name, total / count))
+   sys.stdout.flush()
    
-   print("the sum is: {}".format(aggr))
-
    
-def SortingQuery(table, full_col_name,review):
+def SortingQuery(table):
    """
-      BRIEF  Use DuplicateQuery func to extract row_key, fetch col values & sort: assumes full_col_name to be col family
+      BRIEF  Sort all the rows
    """
-   row_key = DuplicateQuery(table, review)
-   s = table.fetch(row_key, full_col_name)
-   print([sorted(v) for k,v in s])
-   
-   
-def AnalyticsQuery(table, full_col_name,review):
+   for row in sorted(table.fetch_all_rows()):
+      print(row)
+      sys.stdout.flush()
+      
+      
+def AnalyticsQuery(table, full_col_name):
    """
       BRIEF  Use DuplicateQuery func to extract row_key, fetch col family values & compute primitive stats
    """
-   row_key = DuplicateQuery(table, review)
-   G = table.fetch(row_key, full_col_name)
-
-   count = 0
-   _sum = 0
-   for key in G:
-       count += 1
-       _sum += G[key]
-    
-   print('this is the mean: ', _sum/count
+   total = 0
+   count = 0.0
+   for row in table.fetch_all_rows():
+      total += len(Regex.WORD.findall(row[full_col_name]))
+      count += 1.0
+   print("(Analytics) AverageWordCount({0}) = {1}".format(full_col_name, total / count))
+   sys.stdout.flush()
    
    
 if __name__ == '__main__':

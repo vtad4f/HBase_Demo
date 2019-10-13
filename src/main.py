@@ -72,8 +72,7 @@ def DuplicateQuery(table, review):
    
 def AggregateQuery(table, full_col_name):
    """
-      BRIEF Use DuplicateQuery func to extract row_key, fetch values & then perform aggregation
-      NOTE: row-wise
+      BRIEF  Get the average value for the col for all rows & versions (just numerator if fraction)
    """
    total = 0
    count = 0.0
@@ -86,7 +85,7 @@ def AggregateQuery(table, full_col_name):
    
 def SortingQuery(table):
    """
-      BRIEF  Sort all the rows
+      BRIEF  Sort all the rows retrieved
    """
    for row in sorted(table.fetch_all_rows()):
       print(row)
@@ -95,7 +94,7 @@ def SortingQuery(table):
       
 def AnalyticsQuery(table, full_col_name):
    """
-      BRIEF  Use DuplicateQuery func to extract row_key, fetch col family values & compute primitive stats
+      BRIEF  Get the average word count for all rows & versions
    """
    total = 0
    count = 0.0

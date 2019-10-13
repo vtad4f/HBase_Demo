@@ -67,6 +67,7 @@ def DuplicateQuery(table, review):
    row_key = review[Review.USER_ID] + review[Review.MOVIE_ID]
    for row in table.fetch(row_key):
       print(row)
+   print(' ')
    sys.stdout.flush()
    
    
@@ -80,6 +81,7 @@ def AggregateQuery(table, full_col_name):
       total += int(float(row[full_col_name].split('/')[0]))
       count += 1.0
    print("(Aggregate) Average({0}) = {1}".format(full_col_name, total / count))
+   print(' ')
    sys.stdout.flush()
    
    
@@ -87,11 +89,12 @@ def SortingQuery(table):
    """
       BRIEF  Sort all the rows retrieved
    """
-   for row in sorted(table.fetch_all_rows()):
+   for row in sorted("{0:<5} {1:<10} {2}".format(row[FullCol.HELPFUL], row[FullCol.TIME], row[FullCol.USER_NAME]) for row in table.fetch_all_rows()):
       print(row)
-      sys.stdout.flush()
-      
-      
+   print(' ')
+   sys.stdout.flush()
+   
+   
 def AnalyticsQuery(table, full_col_name):
    """
       BRIEF  Get the average word count for all rows & versions
@@ -102,6 +105,7 @@ def AnalyticsQuery(table, full_col_name):
       total += len(Regex.WORD.findall(row[full_col_name]))
       count += 1.0
    print("(Analytics) AverageWordCount({0}) = {1}".format(full_col_name, total / count))
+   print(' ')
    sys.stdout.flush()
    
    

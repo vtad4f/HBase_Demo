@@ -63,23 +63,44 @@ def DuplicateQuery(table, review):
    print(table.fetch(row_key))
    sys.stdout.flush()
    
-   
-def AggregateQuery(table, full_col_name):
-   """
-      BRIEF  TODO
-   """
+   return row_key
    
    
-def SortingQuery(table):
+def AggregateQuery(table, full_col_name, review):
    """
-      BRIEF  TODO
+      BRIEF Use DuplicateQuery func to extract row_key, fetch values & then perform aggregation
+      NOTE: row-wise
    """
+   row_key = DuplicateQuery(table, review)
+   values = table.fetch(row_key)
+   aggr = sum((table[full_col_name]) for row_key in values)
+   
+   print("the sum is: {}".format(aggr))
+
+   
+def SortingQuery(table, full_col_name,review):
+   """
+      BRIEF  Use DuplicateQuery func to extract row_key, fetch col values & sort: assumes full_col_name to be col family
+   """
+   row_key = DuplicateQuery(table, review)
+   s = table.fetch(row_key, full_col_name)
+   print([sorted(v) for k,v in s])
    
    
-def AnalyticsQuery(table, full_col_name):
+def AnalyticsQuery(table, full_col_name,review):
    """
-      BRIEF  TODO
+      BRIEF  Use DuplicateQuery func to extract row_key, fetch col family values & compute primitive stats
    """
+   row_key = DuplicateQuery(table, review)
+   G = table.fetch(row_key, full_col_name)
+
+   count = 0
+   _sum = 0
+   for key in G:
+       count += 1
+       _sum += G[key]
+    
+   print('this is the mean: ', _sum/count
    
    
 if __name__ == '__main__':

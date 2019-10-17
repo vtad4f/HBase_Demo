@@ -41,7 +41,7 @@ def Main(table_name, input_dir):
    input_path = os.path.join('..', input_dir, 'movies.txt')
    
    # Populate the table by parsing the reviews input file
-   table = HBase.ForceCreateTable(table_name, *ColFamily.ALL, host='maria_dev@127.0.0.1', port = "8085")
+   table = HBase.ForceCreateTable(table_name, *ColFamily.ALL, host='maria_dev@127.0.0.1', port = "8080")
    first_review = Parse(input_path, 1000, HBase.PopulateTable, table)
    
    # Put multiple data for some specific entry which allows versioning.

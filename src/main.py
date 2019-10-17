@@ -41,7 +41,7 @@ def Main(table_name, input_dir):
    input_path = os.path.join('..', input_dir, 'movies.txt')
    
    # Populate the table by parsing the reviews input file
-   table = HBase.ForceCreateTable(table_name, *ColFamily.ALL, port = "8085")
+   table = HBase.ForceCreateTable(table_name, *ColFamily.ALL, host='maria_dev@127.0.0.1', port = "8085")
    first_review = Parse(input_path, 1000, HBase.PopulateTable, table)
    
    # Put multiple data for some specific entry which allows versioning.
@@ -113,8 +113,8 @@ if __name__ == '__main__':
    """
       BRIEF  Main execution
    """
-   MockTest()
-   # Test() # Uncomment once the VM is fixed
+   # MockTest()
+   Test() # Uncomment once the VM is fixed
    # Main('reviews', 'in') # uncomment once Test works # TODO - submit with screenshot
    
    

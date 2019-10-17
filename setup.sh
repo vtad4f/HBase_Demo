@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# install python 2.7
-if [[ "$(python --version 2>&1)" != *'2.7'* ]]; then
+# install python 2.7.16
+if [[ "$(python --version 2>&1)" != *'2.7.16'* ]]; then
    sudo yum update
    sudo yum install scl-utils
    sudo yum install centos-release-scl-rh
@@ -9,7 +9,7 @@ if [[ "$(python --version 2>&1)" != *'2.7'* ]]; then
    sudo scl enable python27 bash
    export PYTHONPATH=/usr/lib/python2.7/site-packages/:$PYTHONPATH
 else
-   echo "python 2.7 is already installed"
+   echo "python 2.7.16 is already installed"
 fi
 
 function _PipInstall

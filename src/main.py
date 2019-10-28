@@ -113,8 +113,8 @@ if __name__ == '__main__':
    """
       BRIEF  Main execution
    """
-   # MockTest()
-   Test() # Uncomment once the VM is fixed
+   MockTest()
+   # Test() # Uncomment once the VM is fixed
    # Main('reviews', 'in') # uncomment once Test works # TODO - submit with screenshot
    
    
